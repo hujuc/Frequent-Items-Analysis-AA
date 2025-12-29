@@ -1,137 +1,137 @@
 # Frequent Items Analysis - AA 2025/2026
 
-## Projeto 3: Análise de Itens Frequentes e Menos Frequentes
+## Project 3: Frequent and Less Frequent Items Analysis
 
-**Aluno:** Hugo Gonçalo Lopes Castro  
-**Número:** 113889  
+**Student:** Hugo Gonçalo Lopes Castro  
+**Number:** 113889  
 **Dataset:** Amazon Prime Movies and TV Shows  
-**Atributo:** `release_year`  
+**Attribute:** `release_year`  
 
 ---
 
-##  Descrição
+##  Description
 
-Este projeto implementa e compara três métodos para identificação de itens frequentes:
+This project implements and compares three methods for identifying frequent items:
 
-1. **Contadores Exatos** - Baseline com contagem precisa
-2. **Csuros' Counter** - Contador aproximado com memória reduzida
-3. **Lossy-Count** - Algoritmo de data stream para itens frequentes
+1. **Exact Counters** - Baseline with precise counting
+2. **Csuros' Counter** - Approximate counter with reduced memory
+3. **Lossy-Count** - Data stream algorithm for frequent items
 
 ---
 
-##  Como Executar
+##  How to Run
 
-### Requisitos
+### Requirements
 
 ```bash
 pip install pandas numpy matplotlib
 ```
 
-### Execução Completa
+### Full Execution
 
 ```bash
 cd src
 python main.py --all
 ```
 
-### Modos de Execução
+### Execution Modes
 
 ```bash
-# Apenas contadores exatos
+# Exact counters only
 python main.py --exact
 
-# Apenas Csuros' Counter (com base específica)
+# Csuros' Counter only (with specific base)
 python main.py --csuros --base 2.0 --runs 10
 
-# Apenas Lossy-Count (com epsilon específico)
+# Lossy-Count only (with specific epsilon)
 python main.py --lossy --epsilon 0.01
 
-# Apenas visualizações (requer resultados existentes)
+# Visualizations only (requires existing results)
 python main.py --viz
 ```
 
 ---
 
-##  Estrutura do Projeto
+##  Project Structure
 
 ```
 Frequent-Items-Analysis-AA/
 │
 ├── amazon_prime_titles.csv    # Dataset
-├── README.md                   # Este ficheiro
-├── PROJETO_EXPLICACAO.md      # Explicação detalhada do projeto
+├── README.md                   # This file
+├── PROJETO_EXPLICACAO.md      # Detailed project explanation
 │
 ├── src/
 │   ├── __init__.py
-│   ├── main.py                # Script principal
-│   ├── exact_counter.py       # Contadores exatos
+│   ├── main.py                # Main script
+│   ├── exact_counter.py       # Exact counters
 │   ├── csuros_counter.py      # Csuros' Counter
 │   ├── lossy_count.py         # Lossy-Count
-│   ├── experiments.py         # Gestão de experimentos
-│   └── visualization.py       # Geração de gráficos
+│   ├── experiments.py         # Experiment management
+│   └── visualization.py       # Plot generation
 │
 └── results/
-    ├── exact_counts.csv       # Contagens exatas
-    ├── csuros_results.csv     # Resultados Csuros
-    ├── lossy_count_results.csv # Resultados Lossy-Count
-    ├── comparison_summary.json # Comparação final
-    └── plots/                  # Gráficos gerados
+    ├── exact_counts.csv       # Exact counts
+    ├── csuros_results.csv     # Csuros results
+    ├── lossy_count_results.csv # Lossy-Count results
+    ├── comparison_summary.json # Final comparison
+    └── plots/                  # Generated plots
 ```
 
 ---
 
-##  Resultados
+##  Results
 
-Após execução, os resultados são guardados em `results/`:
+After execution, results are saved in `results/`:
 
-- **exact_counts.csv** - Anos ordenados por frequência
-- **csuros_results.csv** - Estatísticas de erro por base
-- **lossy_count_results.csv** - Precisão por epsilon e n
-- **comparison_summary.json** - Comparação entre métodos
+- **exact_counts.csv** - Years ordered by frequency
+- **csuros_results.csv** - Error statistics by base
+- **lossy_count_results.csv** - Precision by epsilon and n
+- **comparison_summary.json** - Method comparison
 
-### Visualizações
+### Visualizations
 
-Os gráficos são gerados em `results/plots/`:
-- `frequency_distribution.png` - Distribuição de frequências
-- `csuros_error_analysis.png` - Análise de erros Csuros
-- `lossy_count_precision.png` - Precisão Lossy-Count
-- `memory_vs_precision.png` - Trade-off memória/precisão
-- `method_comparison.png` - Comparação de métodos
-- `error_heatmap.png` - Heatmap de F1-Score
+Plots are generated in `results/plots/`:
+- `frequency_distribution.png` - Frequency distribution
+- `csuros_error_analysis.png` - Csuros error analysis
+- `lossy_count_precision.png` - Lossy-Count precision
+- `memory_vs_precision.png` - Memory/precision trade-off
+- `method_comparison.png` - Method comparison
+- `error_heatmap.png` - F1-Score heatmap
 
 ---
 
-##  Algoritmos Implementados
+##  Implemented Algorithms
 
-### 1. Contadores Exatos
-- Complexidade: O(n) tempo, O(k) espaço
-- Precisão: 100%
-- Baseline para comparação
+### 1. Exact Counters
+- Complexity: O(n) time, O(k) space
+- Precision: 100%
+- Baseline for comparison
 
 ### 2. Csuros' Counter
-- Contador probabilístico com incrementos logarítmicos
-- Parâmetro: `base` (tipicamente 2.0)
-- Trade-off: maior base = menos memória, mais erro
+- Probabilistic counter with logarithmic increments
+- Parameter: `base` (typically 2.0)
+- Trade-off: higher base = less memory, more error
 
 ### 3. Lossy-Count
-- Algoritmo de data stream para itens frequentes
-- Parâmetros: `epsilon`, `support`
-- Garantias: não perde itens com freq >= (support - epsilon) * N
+- Data stream algorithm for frequent items
+- Parameters: `epsilon`, `support`
+- Guarantees: doesn't lose items with freq >= (support - epsilon) * N
 
 ---
 
-##  Métricas Avaliadas
+##  Evaluated Metrics
 
-- **Erro Absoluto**: |estimativa - valor_exato|
-- **Erro Relativo**: |estimativa - valor_exato| / valor_exato
+- **Absolute Error**: |estimate - exact_value|
+- **Relative Error**: |estimate - exact_value| / exact_value
 - **Precision**: TP / (TP + FP)
 - **Recall**: TP / (TP + FN)
 - **F1-Score**: 2 * Precision * Recall / (Precision + Recall)
 
 ---
 
-##  Autor
+##  Author
 
 Hugo Gonçalo Lopes Castro - 113889  
-Algoritmos Avançados, DETI, Universidade de Aveiro  
+Advanced Algorithms, DETI, University of Aveiro  
 2025/2026
