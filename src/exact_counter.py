@@ -154,7 +154,7 @@ if __name__ == "__main__":
     
     # Mostrar estatísticas
     stats = counter.get_statistics()
-    print(f"\n📊 STATISTICS:")
+    print(f"\n STATISTICS:")
     print(f"   Total items processed: {stats['total_items']}")
     print(f"   Unique items (years): {stats['unique_items']}")
     print(f"   Minimum count: {stats['min_count']}")
@@ -163,12 +163,12 @@ if __name__ == "__main__":
     print(f"   Processing time: {stats['processing_time']*1000:.2f} ms")
     
     # Top 10 mais frequentes
-    print(f"\n🔝 TOP 10 MOST FREQUENT YEARS:")
+    print(f"\n TOP 10 MOST FREQUENT YEARS:")
     for i, (year, count) in enumerate(counter.get_most_frequent(10), 1):
         print(f"   {i:2}. {int(year)}: {count} occurrences")
     
     # Top 10 menos frequentes
-    print(f"\n🔻 TOP 10 LEAST FREQUENT YEARS:")
+    print(f"\n TOP 10 LEAST FREQUENT YEARS:")
     for i, (year, count) in enumerate(counter.get_least_frequent(10), 1):
         print(f"   {i:2}. {int(year)}: {count} occurrences")
     

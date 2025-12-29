@@ -63,7 +63,7 @@ class ExperimentRunner:
             Estatísticas do contador exato
         """
         print("\n" + "=" * 70)
-        print("📊 EXPERIMENT 1: EXACT COUNTERS (BASELINE)")
+        print(" EXPERIMENT 1: EXACT COUNTERS (BASELINE)")
         print("=" * 70)
         
         self.exact_counter = run_exact_count(self.data_path, self.column)
@@ -71,7 +71,7 @@ class ExperimentRunner:
         
         stats = self.exact_counter.get_statistics()
         
-        print(f"\n✅ Processing completed!")
+        print(f"\n Processing completed!")
         print(f"   • Total items: {stats['total_items']}")
         print(f"   • Unique items: {stats['unique_items']}")
         print(f"   • Time: {stats['processing_time']*1000:.2f} ms")
@@ -97,7 +97,7 @@ class ExperimentRunner:
             bases = [1.3, 1.5, 2.0, 3.0, 4.0]
         
         print("\n" + "=" * 70)
-        print("🔢 EXPERIMENT 2: CSUROS' COUNTER")
+        print(" EXPERIMENT 2: CSUROS' COUNTER")
         print(f"   Bases: {bases}")
         print(f"   Runs per base: {num_runs}")
         print("=" * 70)
@@ -107,7 +107,7 @@ class ExperimentRunner:
         
         for base in bases:
             print(f"\n{'─'*50}")
-            print(f"🔄 Testing base = {base}")
+            print(f" Testing base = {base}")
             
             results = run_csuros_experiment(
                 self.data_path, 
@@ -150,7 +150,7 @@ class ExperimentRunner:
             n_values = [5, 10, 15, 20, 25, 30]
         
         print("\n" + "=" * 70)
-        print("📈 EXPERIMENT 3: LOSSY-COUNT")
+        print(" EXPERIMENT 3: LOSSY-COUNT")
         print(f"   Epsilon values: {epsilon_values}")
         print(f"   N values: {n_values}")
         print("=" * 70)
@@ -173,7 +173,7 @@ class ExperimentRunner:
         }
         
         # Mostrar resumo
-        print("\n📋 PRECISION SUMMARY (Top-10):")
+        print("\n PRECISION SUMMARY (Top-10):")
         print(f"{'Epsilon':<10} {'Precision':<12} {'Recall':<12} {'F1-Score':<12}")
         print("─" * 46)
         
@@ -198,9 +198,9 @@ class ExperimentRunner:
         """
         start_time = time.time()
         
-        print("\n" + "🚀" * 25)
+        print("\n" + "" * 25)
         print("   STARTING ALL EXPERIMENTS")
-        print("🚀" * 25)
+        print("" * 25)
         
         # 1. Contadores Exatos
         self.run_exact_counter()
@@ -217,8 +217,8 @@ class ExperimentRunner:
         total_time = time.time() - start_time
         
         print("\n" + "=" * 70)
-        print("✅ ALL EXPERIMENTS COMPLETED!")
-        print(f"⏱️  Total time: {total_time:.2f} seconds")
+        print(" ALL EXPERIMENTS COMPLETED!")
+        print(f"  Total time: {total_time:.2f} seconds")
         print("=" * 70)
         
         return {
@@ -237,11 +237,11 @@ class ExperimentRunner:
             Resultados da comparação
         """
         print("\n" + "=" * 70)
-        print("📊 METHOD COMPARISON")
+        print(" METHOD COMPARISON")
         print("=" * 70)
         
         if not self.exact_counts:
-            print("❌ Error: Run experiments first!")
+            print(" Error: Run experiments first!")
             return {}
         
         sorted_exact = sorted(self.exact_counts.items(), key=lambda x: x[1], reverse=True)
@@ -283,20 +283,20 @@ class ExperimentRunner:
         self.comparison_results = comparison
         
         # Mostrar comparação
-        print("\n🔝 TOP 10 - EXACT COUNT:")
+        print("\n TOP 10 - EXACT COUNT:")
         for i, (year, count) in enumerate(comparison['exact_top_10'], 1):
             print(f"   {i:2}. {int(year)}: {count}")
         
         if 'csuros_base2' in comparison['methods']:
             csuros = comparison['methods']['csuros_base2']
-            print(f"\n📊 CSUROS (base=2.0):")
+            print(f"\n CSUROS (base=2.0):")
             print(f"   Precision Top-10: {csuros['precision_top10']*100:.0f}%")
             print(f"   Mean Absolute Error: {csuros['mean_abs_error']:.2f}")
             print(f"   Mean Relative Error: {csuros['mean_rel_error']*100:.2f}%")
         
         if 'lossy_count_e001' in comparison['methods']:
             lc = comparison['methods']['lossy_count_e001']
-            print(f"\n📈 LOSSY-COUNT (ε=0.01):")
+            print(f"\n LOSSY-COUNT (ε=0.01):")
             print(f"   Precision Top-10: {lc['precision_top10']*100:.0f}%")
             print(f"   Recall Top-10: {lc['recall_top10']*100:.0f}%")
             print(f"   F1-Score Top-10: {lc['f1_top10']*100:.0f}%")
@@ -317,7 +317,7 @@ class ExperimentRunner:
                                        key=lambda x: x[1], reverse=True):
                 writer.writerow([int(year), count])
         
-        print(f"   💾 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
     
     def _save_csuros_results(self) -> None:
         """Guarda resultados do Csuros' Counter."""
@@ -339,7 +339,7 @@ class ExperimentRunner:
         df = pd.DataFrame(rows)
         df.to_csv(filepath, index=False)
         
-        print(f"   💾 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
     
     def _save_lossy_count_results(self) -> None:
         """Guarda resultados do Lossy-Count."""
@@ -362,7 +362,7 @@ class ExperimentRunner:
         df = pd.DataFrame(rows)
         df.to_csv(filepath, index=False)
         
-        print(f"   💾 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
     
     def _save_comparison_results(self) -> None:
         """Guarda resultados da comparação."""
@@ -390,7 +390,7 @@ class ExperimentRunner:
         with open(filepath, 'w') as f:
             json.dump(comparison_serializable, f, indent=2)
         
-        print(f"   💾 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
 
 
 if __name__ == "__main__":
@@ -406,15 +406,15 @@ if __name__ == "__main__":
     print("   Frequent Items Analysis")
     print("   Hugo Gonçalo Lopes Castro - 113889")
     print("=" * 70)
-    print(f"\n📁 Dataset: {data_path}")
-    print(f"📊 Attribute: release_year")
-    print(f"🕐 Start: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n Dataset: {data_path}")
+    print(f" Attribute: release_year")
+    print(f" Start: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Executar tudo
     results = runner.run_all_experiments()
     
-    print(f"\n🕐 End: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("\n📁 Results saved in: results/")
+    print(f"\n End: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("\n Results saved in: results/")
     print("   • exact_counts.csv")
     print("   • csuros_results.csv")
     print("   • lossy_count_results.csv")

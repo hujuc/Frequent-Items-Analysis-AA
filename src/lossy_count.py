@@ -368,18 +368,18 @@ if __name__ == "__main__":
     print("=" * 60)
     
     # Primeiro, obter contagens exatas para comparação
-    print("\n📊 Getting exact counts for comparison...")
+    print("\n Getting exact counts for comparison...")
     exact_counter = run_exact_count(data_path, 'release_year')
     exact_counts = exact_counter.get_all_counts()
     sorted_exact = sorted(exact_counts.items(), key=lambda x: x[1], reverse=True)
     
-    print(f"\n📋 EXACT TOP 10:")
+    print(f"\n EXACT TOP 10:")
     for i, (year, count) in enumerate(sorted_exact[:10], 1):
         print(f"   {i:2}. {int(year)}: {count}")
     
     # Testar Lossy-Count com diferentes epsilon
     print("\n" + "=" * 60)
-    print("🔄 LOSSY-COUNT EXPERIMENTS")
+    print(" LOSSY-COUNT EXPERIMENTS")
     print("=" * 60)
     
     epsilon_values = [0.1, 0.05, 0.01, 0.005]
@@ -398,7 +398,7 @@ if __name__ == "__main__":
         lc.process_stream(data)
         
         stats = lc.get_statistics()
-        print(f"📈 Statistics:")
+        print(f" Statistics:")
         print(f"   Total processed: {stats['total_items']}")
         print(f"   Items stored: {stats['unique_items_stored']}")
         print(f"   Bucket size: {stats['bucket_width']}")
@@ -413,10 +413,10 @@ if __name__ == "__main__":
         
         hits = len(exact_top_10 & lc_top_10)
         
-        print(f"\n🎯 Lossy-Count TOP 10 (Precision: {hits}/10 = {hits*10}%):")
+        print(f"\n Lossy-Count TOP 10 (Precision: {hits}/10 = {hits*10}%):")
         for i, (year, count) in enumerate(top_10_lc, 1):
             exact = exact_counts.get(year, 0)
-            marker = "✓" if year in exact_top_10 else "✗"
+            marker = "" if year in exact_top_10 else ""
             print(f"   {i:2}. {int(year)}: {count} (exact: {exact}) {marker}")
     
     print("\n" + "=" * 60)

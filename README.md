@@ -9,7 +9,7 @@
 
 ---
 
-## 📋 Descrição
+##  Descrição
 
 Este projeto implementa e compara três métodos para identificação de itens frequentes:
 
@@ -19,7 +19,7 @@ Este projeto implementa e compara três métodos para identificação de itens f
 
 ---
 
-## 🚀 Como Executar
+##  Como Executar
 
 ### Requisitos
 
@@ -52,7 +52,7 @@ python main.py --viz
 
 ---
 
-## 📁 Estrutura do Projeto
+##  Estrutura do Projeto
 
 ```
 Frequent-Items-Analysis-AA/
@@ -80,7 +80,7 @@ Frequent-Items-Analysis-AA/
 
 ---
 
-## 📊 Resultados
+##  Resultados
 
 Após execução, os resultados são guardados em `results/`:
 
@@ -101,7 +101,7 @@ Os gráficos são gerados em `results/plots/`:
 
 ---
 
-## 📚 Algoritmos Implementados
+##  Algoritmos Implementados
 
 ### 1. Contadores Exatos
 - Complexidade: O(n) tempo, O(k) espaço
@@ -120,7 +120,7 @@ Os gráficos são gerados em `results/plots/`:
 
 ---
 
-## 📈 Métricas Avaliadas
+##  Métricas Avaliadas
 
 - **Erro Absoluto**: |estimativa - valor_exato|
 - **Erro Relativo**: |estimativa - valor_exato| / valor_exato
@@ -130,7 +130,7 @@ Os gráficos são gerados em `results/plots/`:
 
 ---
 
-## 👤 Autor
+##  Autor
 
 Hugo Gonçalo Lopes Castro - 113889  
 Algoritmos Avançados, DETI, Universidade de Aveiro  

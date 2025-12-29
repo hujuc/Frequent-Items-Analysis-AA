@@ -78,7 +78,7 @@ class Visualizer:
                     self.comparison = json.load(f)
                     
         except Exception as e:
-            print(f"⚠️ Warning when loading data: {e}")
+            print(f" Warning when loading data: {e}")
     
     def plot_frequency_distribution(self) -> str:
         """
@@ -88,7 +88,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.exact_counts is None:
-            print("❌ Exact data not available")
+            print(" Exact data not available")
             return ""
         
         # Ordenar por frequência
@@ -122,7 +122,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
         return filepath
     
     def plot_csuros_error_analysis(self) -> str:
@@ -133,7 +133,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.csuros_results is None:
-            print("❌ Csuros data not available")
+            print(" Csuros data not available")
             return ""
         
         df = self.csuros_results
@@ -180,7 +180,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
         return filepath
     
     def plot_lossy_count_precision(self) -> str:
@@ -191,7 +191,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.lossy_count_results is None:
-            print("❌ Lossy-Count data not available")
+            print(" Lossy-Count data not available")
             return ""
         
         df = self.lossy_count_results
@@ -239,7 +239,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
         return filepath
     
     def plot_memory_vs_precision(self) -> str:
@@ -250,7 +250,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.lossy_count_results is None:
-            print("❌ Lossy-Count data not available")
+            print(" Lossy-Count data not available")
             return ""
         
         df = self.lossy_count_results
@@ -287,7 +287,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
         return filepath
     
     def plot_method_comparison(self) -> str:
@@ -298,7 +298,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.comparison is None:
-            print("❌ Comparison data not available")
+            print(" Comparison data not available")
             return ""
         
         fig, axes = plt.subplots(1, 2, figsize=(14, 5))
@@ -360,7 +360,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
         return filepath
     
     def plot_error_heatmap(self) -> str:
@@ -371,7 +371,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.lossy_count_results is None:
-            print("❌ Lossy-Count data not available")
+            print(" Lossy-Count data not available")
             return ""
         
         df = self.lossy_count_results
@@ -409,7 +409,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Saved: {filepath}")
+        print(f"    Saved: {filepath}")
         return filepath
     
     def generate_all_plots(self) -> List[str]:
@@ -420,7 +420,7 @@ class Visualizer:
             Lista de caminhos para os ficheiros guardados
         """
         print("\n" + "=" * 70)
-        print("📊 GENERATING VISUALIZATIONS")
+        print(" GENERATING VISUALIZATIONS")
         print("=" * 70)
         
         plots = []
@@ -444,8 +444,8 @@ class Visualizer:
         plots.append(self.plot_error_heatmap())
         
         print("\n" + "=" * 70)
-        print(f"✅ {len([p for p in plots if p])} plots generated!")
-        print(f"📁 Saved in: {self.plots_dir}")
+        print(f" {len([p for p in plots if p])} plots generated!")
+        print(f" Saved in: {self.plots_dir}")
         print("=" * 70)
         
         return plots
@@ -463,7 +463,7 @@ if __name__ == "__main__":
     
     # Verificar se existem resultados
     if not os.path.exists(results_dir):
-        print("\n❌ Results directory not found!")
+        print("\n Results directory not found!")
         print("   Run first: python experiments.py")
         sys.exit(1)
     

@@ -3,7 +3,7 @@
 
 ---
 
-## 📋 Informações do Projeto
+##  Informações do Projeto
 
 **Disciplina:** Algoritmos Avançados  
 **Período:** 2025/2026 - 1º Semestre  
@@ -12,7 +12,7 @@
 
 ---
 
-## 🎯 Atribuição Específica
+##  Atribuição Específica
 
 **Aluno:** HUGO GONÇALO LOPES CASTRO  
 **Número:** 113889  
@@ -26,19 +26,19 @@
 
 ---
 
-## 🎯 Objetivos do Projeto
+##  Objetivos do Projeto
 
 O objetivo é **identificar itens frequentes** em datasets usando diferentes métodos e **avaliar a qualidade das estimativas** em relação às contagens exatas.
 
 ### O que deve ser desenvolvido:
 
-1. ✅ **Contadores Exatos** - contagem precisa de todas as ocorrências
-2. ✅ **Contadores Aproximados** - estimativas usando Csuros' Counter
-3. ✅ **Algoritmo de Data Stream** - identificação de itens frequentes usando Lossy-Count
+1.  **Contadores Exatos** - contagem precisa de todas as ocorrências
+2.  **Contadores Aproximados** - estimativas usando Csuros' Counter
+3.  **Algoritmo de Data Stream** - identificação de itens frequentes usando Lossy-Count
 
 ---
 
-## 📊 Dataset: Amazon Prime Titles
+##  Dataset: Amazon Prime Titles
 
 ### Descrição
 O dataset contém informações sobre filmes e séries disponíveis na Amazon Prime, com os seguintes campos:
@@ -64,7 +64,7 @@ Identificar os **anos mais frequentes de lançamento** de conteúdos na Amazon P
 
 ---
 
-## 🔧 Tarefas a Implementar
+##  Tarefas a Implementar
 
 ### A) Contadores Exatos
 **Objetivo:** Computar o número exato de ocorrências de cada ano de lançamento.
@@ -138,7 +138,7 @@ Identificar os **anos mais frequentes de lançamento** de conteúdos na Amazon P
 
 ---
 
-## 📈 D) Comparação de Performance
+##  D) Comparação de Performance
 
 ### Métricas a Analisar:
 
@@ -172,7 +172,7 @@ Identificar os **anos mais frequentes de lançamento** de conteúdos na Amazon P
 
 ---
 
-## 📊 Experimentos Sugeridos
+##  Experimentos Sugeridos
 
 ### Experimento 1: Contadores Exatos (Baseline)
 ```
@@ -211,7 +211,7 @@ Para n = [5, 10, 15, 20]:
 
 ---
 
-## 📝 E) Relatório (Máximo 10 páginas)
+##  E) Relatório (Máximo 10 páginas)
 
 ### Estrutura Sugerida:
 
@@ -279,7 +279,7 @@ Para n = [5, 10, 15, 20]:
 
 ---
 
-## 🛠️ Implementação Técnica
+##  Implementação Técnica
 
 ### Linguagens Sugeridas:
 - **Python** (recomendado): pandas, numpy, matplotlib
@@ -324,7 +324,7 @@ project/
 
 ---
 
-## ✅ Checklist do Projeto
+##  Checklist do Projeto
 
 ### Implementação:
 - [ ] Carregar e explorar o dataset
@@ -367,7 +367,7 @@ project/
 
 ---
 
-## 📚 Referências Úteis
+##  Referências Úteis
 
 ### Artigos Científicos:
 1. **Lossy Counting**: Manku, G. S., & Motwani, R. (2002). "Approximate frequency counts over data streams"
@@ -381,7 +381,7 @@ project/
 
 ---
 
-## 💡 Dicas Importantes
+##  Dicas Importantes
 
 1. **Comece pelos contadores exatos** - são a base de comparação
 2. **Documente bem os parâmetros** usados em cada experimento
@@ -394,7 +394,7 @@ project/
 
 ---
 
-## 🎓 Critérios de Avaliação (Estimados)
+##  Critérios de Avaliação (Estimados)
 
 - **Implementação correta dos algoritmos** (40%)
 - **Qualidade dos experimentos e análise** (30%)
@@ -403,4 +403,4 @@ project/
 
 ---
 
-**Boa sorte com o projeto! 🚀**
+**Boa sorte com o projeto! **

@@ -37,7 +37,7 @@ def print_header():
 
 def print_dataset_info(data_path: str):
     """Imprime informações sobre o dataset."""
-    print("\n📁 DATASET:")
+    print("\n DATASET:")
     print(f"   File: amazon_prime_titles.csv")
     print(f"   Attribute analyzed: release_year")
     print(f"   Path: {data_path}")
@@ -50,7 +50,7 @@ def run_all(data_path: str):
     Args:
         data_path: Caminho para o dataset
     """
-    print("\n🚀 MODE: Full Execution")
+    print("\n MODE: Full Execution")
     print("   - Exact Counters")
     print("   - Csuros' Counter")
     print("   - Lossy-Count")
@@ -70,18 +70,18 @@ def run_all(data_path: str):
 
 def run_exact_only(data_path: str):
     """Executa apenas contadores exatos."""
-    print("\n🔢 MODE: Exact Counters Only")
+    print("\n MODE: Exact Counters Only")
     
     runner = ExperimentRunner(data_path, column='release_year')
     runner.run_exact_counter()
     
     # Mostrar resultados detalhados
-    print("\n📋 DETAILED RESULTS:")
-    print("\n🔝 TOP 20 MOST FREQUENT YEARS:")
+    print("\n DETAILED RESULTS:")
+    print("\n TOP 20 MOST FREQUENT YEARS:")
     for i, (year, count) in enumerate(runner.exact_counter.get_most_frequent(20), 1):
         print(f"   {i:2}. {int(year)}: {count} titles")
     
-    print("\n🔻 TOP 10 LEAST FREQUENT YEARS:")
+    print("\n TOP 10 LEAST FREQUENT YEARS:")
     for i, (year, count) in enumerate(runner.exact_counter.get_least_frequent(10), 1):
         print(f"   {i:2}. {int(year)}: {count} titles")
 
@@ -95,7 +95,7 @@ def run_csuros_only(data_path: str, base: float = 2.0, runs: int = 10):
         base: Base do contador
         runs: Número de execuções
     """
-    print(f"\n🔢 MODE: Csuros' Counter Only (base={base}, runs={runs})")
+    print(f"\n MODE: Csuros' Counter Only (base={base}, runs={runs})")
     
     runner = ExperimentRunner(data_path, column='release_year')
     runner.run_exact_counter()  # Precisamos do baseline
@@ -110,7 +110,7 @@ def run_lossy_only(data_path: str, epsilon: float = 0.01):
         data_path: Caminho para o dataset
         epsilon: Valor de epsilon
     """
-    print(f"\n📈 MODE: Lossy-Count Only (epsilon={epsilon})")
+    print(f"\n MODE: Lossy-Count Only (epsilon={epsilon})")
     
     runner = ExperimentRunner(data_path, column='release_year')
     runner.run_exact_counter()  # Precisamos do baseline
@@ -124,10 +124,10 @@ def run_visualizations_only(results_dir: str):
     Args:
         results_dir: Diretório com os resultados
     """
-    print("\n📊 MODE: Visualizations Only")
+    print("\n MODE: Visualizations Only")
     
     if not os.path.exists(results_dir):
-        print(f"❌ Results directory not found: {results_dir}")
+        print(f" Results directory not found: {results_dir}")
         print("   Run experiments first!")
         return
     
@@ -178,11 +178,11 @@ Usage examples:
     results_dir = os.path.join(script_dir, "..", "results")
     
     print_dataset_info(data_path)
-    print(f"\n🕐 Start: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n Start: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Verificar se o dataset existe
     if not os.path.exists(data_path) and not args.viz:
-        print(f"\n❌ Dataset not found: {data_path}")
+        print(f"\n Dataset not found: {data_path}")
         sys.exit(1)
     
     # Executar modo selecionado
@@ -198,12 +198,12 @@ Usage examples:
         run_all(data_path)
     else:
         # Default: executar tudo
-        print("\n💡 No mode specified. Running everything...")
+        print("\n No mode specified. Running everything...")
         run_all(data_path)
     
-    print(f"\n🕐 End: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n End: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("\n" + "═" * 70)
-    print("✅ Completed!")
+    print(" Completed!")
     print("═" * 70 + "\n")
 
 
