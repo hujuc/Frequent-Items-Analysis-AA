@@ -145,8 +145,8 @@ if __name__ == "__main__":
     data_path = os.path.join(script_dir, "..", "amazon_prime_titles.csv")
     
     print("=" * 60)
-    print("CONTADORES EXATOS - Amazon Prime Dataset")
-    print("Atributo: release_year")
+    print("EXACT COUNTERS - Amazon Prime Dataset")
+    print("Attribute: release_year")
     print("=" * 60)
     
     # Executar contagem
@@ -154,22 +154,22 @@ if __name__ == "__main__":
     
     # Mostrar estatísticas
     stats = counter.get_statistics()
-    print(f"\n📊 ESTATÍSTICAS:")
-    print(f"   Total de itens processados: {stats['total_items']}")
-    print(f"   Itens únicos (anos): {stats['unique_items']}")
-    print(f"   Contagem mínima: {stats['min_count']}")
-    print(f"   Contagem máxima: {stats['max_count']}")
-    print(f"   Média de contagens: {stats['avg_count']:.2f}")
-    print(f"   Tempo de processamento: {stats['processing_time']*1000:.2f} ms")
+    print(f"\n📊 STATISTICS:")
+    print(f"   Total items processed: {stats['total_items']}")
+    print(f"   Unique items (years): {stats['unique_items']}")
+    print(f"   Minimum count: {stats['min_count']}")
+    print(f"   Maximum count: {stats['max_count']}")
+    print(f"   Average count: {stats['avg_count']:.2f}")
+    print(f"   Processing time: {stats['processing_time']*1000:.2f} ms")
     
     # Top 10 mais frequentes
-    print(f"\n🔝 TOP 10 ANOS MAIS FREQUENTES:")
+    print(f"\n🔝 TOP 10 MOST FREQUENT YEARS:")
     for i, (year, count) in enumerate(counter.get_most_frequent(10), 1):
-        print(f"   {i:2}. {int(year)}: {count} ocorrências")
+        print(f"   {i:2}. {int(year)}: {count} occurrences")
     
     # Top 10 menos frequentes
-    print(f"\n🔻 TOP 10 ANOS MENOS FREQUENTES:")
+    print(f"\n🔻 TOP 10 LEAST FREQUENT YEARS:")
     for i, (year, count) in enumerate(counter.get_least_frequent(10), 1):
-        print(f"   {i:2}. {int(year)}: {count} ocorrências")
+        print(f"   {i:2}. {int(year)}: {count} occurrences")
     
     print("\n" + "=" * 60)

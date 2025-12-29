@@ -27,8 +27,8 @@ def print_header():
     """Imprime cabeçalho do programa."""
     print("\n" + "═" * 70)
     print("║" + " " * 68 + "║")
-    print("║" + "    ALGORITMOS AVANÇADOS 2025/2026 - TRABALHO 3".center(68) + "║")
-    print("║" + "    Análise de Itens Frequentes".center(68) + "║")
+    print("║" + "    ADVANCED ALGORITHMS 2025/2026 - PROJECT 3".center(68) + "║")
+    print("║" + "    Frequent Items Analysis".center(68) + "║")
     print("║" + " " * 68 + "║")
     print("║" + "    Hugo Gonçalo Lopes Castro - 113889".center(68) + "║")
     print("║" + " " * 68 + "║")
@@ -38,9 +38,9 @@ def print_header():
 def print_dataset_info(data_path: str):
     """Imprime informações sobre o dataset."""
     print("\n📁 DATASET:")
-    print(f"   Ficheiro: amazon_prime_titles.csv")
-    print(f"   Atributo analisado: release_year")
-    print(f"   Caminho: {data_path}")
+    print(f"   File: amazon_prime_titles.csv")
+    print(f"   Attribute analyzed: release_year")
+    print(f"   Path: {data_path}")
 
 
 def run_all(data_path: str):
@@ -50,11 +50,11 @@ def run_all(data_path: str):
     Args:
         data_path: Caminho para o dataset
     """
-    print("\n🚀 MODO: Execução Completa")
-    print("   - Contadores Exatos")
+    print("\n🚀 MODE: Full Execution")
+    print("   - Exact Counters")
     print("   - Csuros' Counter")
     print("   - Lossy-Count")
-    print("   - Visualizações")
+    print("   - Visualizations")
     
     # Executar experimentos
     runner = ExperimentRunner(data_path, column='release_year')
@@ -70,20 +70,20 @@ def run_all(data_path: str):
 
 def run_exact_only(data_path: str):
     """Executa apenas contadores exatos."""
-    print("\n🔢 MODO: Apenas Contadores Exatos")
+    print("\n🔢 MODE: Exact Counters Only")
     
     runner = ExperimentRunner(data_path, column='release_year')
     runner.run_exact_counter()
     
     # Mostrar resultados detalhados
-    print("\n📋 RESULTADOS DETALHADOS:")
-    print("\n🔝 TOP 20 ANOS MAIS FREQUENTES:")
+    print("\n📋 DETAILED RESULTS:")
+    print("\n🔝 TOP 20 MOST FREQUENT YEARS:")
     for i, (year, count) in enumerate(runner.exact_counter.get_most_frequent(20), 1):
-        print(f"   {i:2}. {int(year)}: {count} títulos")
+        print(f"   {i:2}. {int(year)}: {count} titles")
     
-    print("\n🔻 TOP 10 ANOS MENOS FREQUENTES:")
+    print("\n🔻 TOP 10 LEAST FREQUENT YEARS:")
     for i, (year, count) in enumerate(runner.exact_counter.get_least_frequent(10), 1):
-        print(f"   {i:2}. {int(year)}: {count} títulos")
+        print(f"   {i:2}. {int(year)}: {count} titles")
 
 
 def run_csuros_only(data_path: str, base: float = 2.0, runs: int = 10):
@@ -95,7 +95,7 @@ def run_csuros_only(data_path: str, base: float = 2.0, runs: int = 10):
         base: Base do contador
         runs: Número de execuções
     """
-    print(f"\n🔢 MODO: Apenas Csuros' Counter (base={base}, runs={runs})")
+    print(f"\n🔢 MODE: Csuros' Counter Only (base={base}, runs={runs})")
     
     runner = ExperimentRunner(data_path, column='release_year')
     runner.run_exact_counter()  # Precisamos do baseline
@@ -110,7 +110,7 @@ def run_lossy_only(data_path: str, epsilon: float = 0.01):
         data_path: Caminho para o dataset
         epsilon: Valor de epsilon
     """
-    print(f"\n📈 MODO: Apenas Lossy-Count (epsilon={epsilon})")
+    print(f"\n📈 MODE: Lossy-Count Only (epsilon={epsilon})")
     
     runner = ExperimentRunner(data_path, column='release_year')
     runner.run_exact_counter()  # Precisamos do baseline
@@ -124,11 +124,11 @@ def run_visualizations_only(results_dir: str):
     Args:
         results_dir: Diretório com os resultados
     """
-    print("\n📊 MODO: Apenas Visualizações")
+    print("\n📊 MODE: Visualizations Only")
     
     if not os.path.exists(results_dir):
-        print(f"❌ Diretório de resultados não encontrado: {results_dir}")
-        print("   Execute primeiro os experimentos!")
+        print(f"❌ Results directory not found: {results_dir}")
+        print("   Run experiments first!")
         return
     
     viz = Visualizer(results_dir)
@@ -136,37 +136,37 @@ def run_visualizations_only(results_dir: str):
 
 
 def main():
-    """Função principal."""
+    """Main function."""
     parser = argparse.ArgumentParser(
-        description='Análise de Itens Frequentes - AA 2025/2026',
+        description='Frequent Items Analysis - AA 2025/2026',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Exemplos de uso:
-  python main.py --all                    # Executar tudo
-  python main.py --exact                  # Apenas contadores exatos
-  python main.py --csuros --base 2.0      # Csuros com base específica
-  python main.py --lossy --epsilon 0.01   # Lossy-Count com epsilon específico
-  python main.py --viz                    # Apenas visualizações
+Usage examples:
+  python main.py --all                    # Run everything
+  python main.py --exact                  # Exact counters only
+  python main.py --csuros --base 2.0      # Csuros with specific base
+  python main.py --lossy --epsilon 0.01   # Lossy-Count with specific epsilon
+  python main.py --viz                    # Visualizations only
         """
     )
     
     parser.add_argument('--all', action='store_true',
-                       help='Executar todos os experimentos e visualizações')
+                       help='Run all experiments and visualizations')
     parser.add_argument('--exact', action='store_true',
-                       help='Executar apenas contadores exatos')
+                       help='Run exact counters only')
     parser.add_argument('--csuros', action='store_true',
-                       help='Executar apenas Csuros\' Counter')
+                       help='Run Csuros\' Counter only')
     parser.add_argument('--lossy', action='store_true',
-                       help='Executar apenas Lossy-Count')
+                       help='Run Lossy-Count only')
     parser.add_argument('--viz', action='store_true',
-                       help='Gerar apenas visualizações')
+                       help='Generate visualizations only')
     
     parser.add_argument('--base', type=float, default=2.0,
-                       help='Base para Csuros\' Counter (default: 2.0)')
+                       help='Base for Csuros\' Counter (default: 2.0)')
     parser.add_argument('--runs', type=int, default=10,
-                       help='Número de execuções para Csuros (default: 10)')
+                       help='Number of runs for Csuros (default: 10)')
     parser.add_argument('--epsilon', type=float, default=0.01,
-                       help='Epsilon para Lossy-Count (default: 0.01)')
+                       help='Epsilon for Lossy-Count (default: 0.01)')
     
     args = parser.parse_args()
     
@@ -178,11 +178,11 @@ Exemplos de uso:
     results_dir = os.path.join(script_dir, "..", "results")
     
     print_dataset_info(data_path)
-    print(f"\n🕐 Início: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n🕐 Start: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Verificar se o dataset existe
     if not os.path.exists(data_path) and not args.viz:
-        print(f"\n❌ Dataset não encontrado: {data_path}")
+        print(f"\n❌ Dataset not found: {data_path}")
         sys.exit(1)
     
     # Executar modo selecionado
@@ -198,12 +198,12 @@ Exemplos de uso:
         run_all(data_path)
     else:
         # Default: executar tudo
-        print("\n💡 Nenhum modo especificado. A executar tudo...")
+        print("\n💡 No mode specified. Running everything...")
         run_all(data_path)
     
-    print(f"\n🕐 Fim: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n🕐 End: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("\n" + "═" * 70)
-    print("✅ Concluído!")
+    print("✅ Completed!")
     print("═" * 70 + "\n")
 
 

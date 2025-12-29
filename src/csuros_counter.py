@@ -326,18 +326,18 @@ if __name__ == "__main__":
     
     print("=" * 60)
     print("CSUROS' COUNTER - Amazon Prime Dataset")
-    print("Atributo: release_year")
+    print("Attribute: release_year")
     print("=" * 60)
     
     # Primeiro, obter contagens exatas para comparação
-    print("\n📊 A obter contagens exatas para comparação...")
+    print("\n📊 Getting exact counts for comparison...")
     exact_counter = run_exact_count(data_path, 'release_year')
     exact_counts = exact_counter.get_all_counts()
     
     # Testar com diferentes bases
     for base in [1.5, 2.0, 4.0]:
         print(f"\n{'='*60}")
-        print(f"🔢 TESTE COM BASE = {base}")
+        print(f"🔢 TEST WITH BASE = {base}")
         print(f"{'='*60}")
         
         # Executar experimento com 10 corridas
@@ -347,18 +347,18 @@ if __name__ == "__main__":
         # Analisar resultados
         analysis = analyze_csuros_results(results, exact_counts)
         
-        print(f"\n📈 ESTATÍSTICAS DE ERRO:")
-        print(f"   Erro Absoluto Médio: {analysis['overall']['mean_absolute_error']:.2f}")
-        print(f"   Erro Absoluto Máximo: {analysis['overall']['max_absolute_error']:.2f}")
-        print(f"   Erro Relativo Médio: {analysis['overall']['mean_relative_error']*100:.2f}%")
-        print(f"   Erro Relativo Máximo: {analysis['overall']['max_relative_error']*100:.2f}%")
+        print(f"\n📈 ERROR STATISTICS:")
+        print(f"   Mean Absolute Error: {analysis['overall']['mean_absolute_error']:.2f}")
+        print(f"   Max Absolute Error: {analysis['overall']['max_absolute_error']:.2f}")
+        print(f"   Mean Relative Error: {analysis['overall']['mean_relative_error']*100:.2f}%")
+        print(f"   Max Relative Error: {analysis['overall']['max_relative_error']*100:.2f}%")
         
         # Mostrar top 5 para a última corrida
         last_run = results['runs'][-1]
-        print(f"\n🔝 TOP 5 (última corrida):")
+        print(f"\n🔝 TOP 5 (last run):")
         for i, (year, estimate) in enumerate(last_run['most_frequent'][:5], 1):
             exact = exact_counts.get(year, 0)
             error = abs(estimate - exact)
-            print(f"   {i}. {int(year)}: estimativa={estimate:.0f}, exato={exact}, erro={error:.0f}")
+            print(f"   {i}. {int(year)}: estimate={estimate:.0f}, exact={exact}, error={error:.0f}")
     
     print("\n" + "=" * 60)

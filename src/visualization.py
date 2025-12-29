@@ -78,7 +78,7 @@ class Visualizer:
                     self.comparison = json.load(f)
                     
         except Exception as e:
-            print(f"⚠️ Aviso ao carregar dados: {e}")
+            print(f"⚠️ Warning when loading data: {e}")
     
     def plot_frequency_distribution(self) -> str:
         """
@@ -88,7 +88,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.exact_counts is None:
-            print("❌ Dados exatos não disponíveis")
+            print("❌ Exact data not available")
             return ""
         
         # Ordenar por frequência
@@ -105,15 +105,15 @@ class Visualizer:
             bars[i].set_color('coral')
             bars[i].set_edgecolor('darkred')
         
-        ax.set_xlabel('Ano de Lançamento')
-        ax.set_ylabel('Número de Títulos')
-        ax.set_title('Distribuição de Títulos Amazon Prime por Ano de Lançamento\n(Top 30 anos mais frequentes)')
+        ax.set_xlabel('Release Year')
+        ax.set_ylabel('Number of Titles')
+        ax.set_title('Amazon Prime Titles Distribution by Release Year\n(Top 30 most frequent years)')
         ax.set_xticks(range(len(years)))
         ax.set_xticklabels(years, rotation=45, ha='right')
         
         # Legenda
         top10_patch = mpatches.Patch(color='coral', label='Top 10')
-        other_patch = mpatches.Patch(color='steelblue', label='Outros')
+        other_patch = mpatches.Patch(color='steelblue', label='Others')
         ax.legend(handles=[top10_patch, other_patch], loc='upper right')
         
         plt.tight_layout()
@@ -122,7 +122,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Guardado: {filepath}")
+        print(f"   📈 Saved: {filepath}")
         return filepath
     
     def plot_csuros_error_analysis(self) -> str:
@@ -133,7 +133,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.csuros_results is None:
-            print("❌ Dados Csuros não disponíveis")
+            print("❌ Csuros data not available")
             return ""
         
         df = self.csuros_results
@@ -146,13 +146,13 @@ class Visualizer:
         width = 0.35
         
         ax1.bar([i - width/2 for i in x], df['mean_abs_error'], width, 
-                label='Erro Médio', color='steelblue', alpha=0.8)
+                label='Mean Error', color='steelblue', alpha=0.8)
         ax1.bar([i + width/2 for i in x], df['max_abs_error'], width,
-                label='Erro Máximo', color='coral', alpha=0.8)
+                label='Max Error', color='coral', alpha=0.8)
         
-        ax1.set_xlabel('Base do Contador')
-        ax1.set_ylabel('Erro Absoluto')
-        ax1.set_title('Erro Absoluto por Base - Csuros\' Counter')
+        ax1.set_xlabel('Counter Base')
+        ax1.set_ylabel('Absolute Error')
+        ax1.set_title('Absolute Error by Base - Csuros\' Counter')
         ax1.set_xticks(x)
         ax1.set_xticklabels([f'{b:.1f}' for b in df['base']])
         ax1.legend()
@@ -162,13 +162,13 @@ class Visualizer:
         ax2 = axes[1]
         
         ax2.bar([i - width/2 for i in x], df['mean_rel_error'] * 100, width,
-                label='Erro Médio', color='steelblue', alpha=0.8)
+                label='Mean Error', color='steelblue', alpha=0.8)
         ax2.bar([i + width/2 for i in x], df['max_rel_error'] * 100, width,
-                label='Erro Máximo', color='coral', alpha=0.8)
+                label='Max Error', color='coral', alpha=0.8)
         
-        ax2.set_xlabel('Base do Contador')
-        ax2.set_ylabel('Erro Relativo (%)')
-        ax2.set_title('Erro Relativo por Base - Csuros\' Counter')
+        ax2.set_xlabel('Counter Base')
+        ax2.set_ylabel('Relative Error (%)')
+        ax2.set_title('Relative Error by Base - Csuros\' Counter')
         ax2.set_xticks(x)
         ax2.set_xticklabels([f'{b:.1f}' for b in df['base']])
         ax2.legend()
@@ -180,7 +180,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Guardado: {filepath}")
+        print(f"   📈 Saved: {filepath}")
         return filepath
     
     def plot_lossy_count_precision(self) -> str:
@@ -191,7 +191,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.lossy_count_results is None:
-            print("❌ Dados Lossy-Count não disponíveis")
+            print("❌ Lossy-Count data not available")
             return ""
         
         df = self.lossy_count_results
@@ -211,7 +211,7 @@ class Visualizer:
         
         ax1.set_xlabel('Epsilon (ε)')
         ax1.set_ylabel('Precision (%)')
-        ax1.set_title('Precision do Lossy-Count por Epsilon')
+        ax1.set_title('Lossy-Count Precision by Epsilon')
         ax1.set_xscale('log')
         ax1.legend(title='Top-N', loc='lower right')
         ax1.grid(True, alpha=0.3)
@@ -227,7 +227,7 @@ class Visualizer:
         
         ax2.set_xlabel('Epsilon (ε)')
         ax2.set_ylabel('F1-Score (%)')
-        ax2.set_title('F1-Score do Lossy-Count por Epsilon')
+        ax2.set_title('Lossy-Count F1-Score by Epsilon')
         ax2.set_xscale('log')
         ax2.legend(title='Top-N', loc='lower right')
         ax2.grid(True, alpha=0.3)
@@ -239,7 +239,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Guardado: {filepath}")
+        print(f"   📈 Saved: {filepath}")
         return filepath
     
     def plot_memory_vs_precision(self) -> str:
@@ -250,7 +250,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.lossy_count_results is None:
-            print("❌ Dados Lossy-Count não disponíveis")
+            print("❌ Lossy-Count data not available")
             return ""
         
         df = self.lossy_count_results
@@ -271,9 +271,9 @@ class Visualizer:
                        textcoords="offset points", xytext=(5, 5),
                        fontsize=8)
         
-        ax.set_xlabel('Memória Utilizada (número de entries)')
-        ax.set_ylabel('Precision Top-10 (%)')
-        ax.set_title('Trade-off: Memória vs Precisão (Lossy-Count)')
+        ax.set_xlabel('Memory Used (number of entries)')
+        ax.set_ylabel('Top-10 Precision (%)')
+        ax.set_title('Trade-off: Memory vs Precision (Lossy-Count)')
         ax.set_xscale('log')
         
         cbar = plt.colorbar(scatter)
@@ -287,7 +287,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Guardado: {filepath}")
+        print(f"   📈 Saved: {filepath}")
         return filepath
     
     def plot_method_comparison(self) -> str:
@@ -298,13 +298,13 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.comparison is None:
-            print("❌ Dados de comparação não disponíveis")
+            print("❌ Comparison data not available")
             return ""
         
         fig, axes = plt.subplots(1, 2, figsize=(14, 5))
         
         # Dados para comparação
-        methods = ['Exato', 'Csuros (b=2)', 'Lossy (ε=0.01)']
+        methods = ['Exact', 'Csuros (b=2)', 'Lossy (ε=0.01)']
         
         # Precisão no Top-10
         ax1 = axes[0]
@@ -329,8 +329,8 @@ class Visualizer:
             ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1,
                     f'{precision:.0f}%', ha='center', va='bottom', fontsize=11)
         
-        ax1.set_ylabel('Precisão (%)')
-        ax1.set_title('Precisão na Identificação dos Top-10')
+        ax1.set_ylabel('Precision (%)')
+        ax1.set_title('Precision in Top-10 Identification')
         ax1.set_ylim([0, 110])
         ax1.grid(axis='y', alpha=0.3)
         
@@ -345,8 +345,8 @@ class Visualizer:
             ax2.barh(range(len(years)), counts, color='steelblue', alpha=0.8)
             ax2.set_yticks(range(len(years)))
             ax2.set_yticklabels(years)
-            ax2.set_xlabel('Número de Títulos')
-            ax2.set_title('Top 10 Anos Mais Frequentes (Contagem Exata)')
+            ax2.set_xlabel('Number of Titles')
+            ax2.set_title('Top 10 Most Frequent Years (Exact Count)')
             ax2.invert_yaxis()
             ax2.grid(axis='x', alpha=0.3)
             
@@ -360,7 +360,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Guardado: {filepath}")
+        print(f"   📈 Saved: {filepath}")
         return filepath
     
     def plot_error_heatmap(self) -> str:
@@ -371,7 +371,7 @@ class Visualizer:
             Caminho para o ficheiro guardado
         """
         if self.lossy_count_results is None:
-            print("❌ Dados Lossy-Count não disponíveis")
+            print("❌ Lossy-Count data not available")
             return ""
         
         df = self.lossy_count_results
@@ -391,7 +391,7 @@ class Visualizer:
         
         ax.set_xlabel('N (Top-N)')
         ax.set_ylabel('Epsilon (ε)')
-        ax.set_title('F1-Score (%) - Lossy-Count\n(Verde=Melhor, Vermelho=Pior)')
+        ax.set_title('F1-Score (%) - Lossy-Count\n(Green=Better, Red=Worse)')
         
         # Adicionar valores nas células
         for i in range(len(pivot.index)):
@@ -409,7 +409,7 @@ class Visualizer:
         plt.savefig(filepath, dpi=150, bbox_inches='tight')
         plt.close()
         
-        print(f"   📈 Guardado: {filepath}")
+        print(f"   📈 Saved: {filepath}")
         return filepath
     
     def generate_all_plots(self) -> List[str]:
@@ -420,32 +420,32 @@ class Visualizer:
             Lista de caminhos para os ficheiros guardados
         """
         print("\n" + "=" * 70)
-        print("📊 GERANDO VISUALIZAÇÕES")
+        print("📊 GENERATING VISUALIZATIONS")
         print("=" * 70)
         
         plots = []
         
-        print("\n1. Distribuição de Frequências...")
+        print("\n1. Frequency Distribution...")
         plots.append(self.plot_frequency_distribution())
         
-        print("\n2. Análise de Erros - Csuros...")
+        print("\n2. Error Analysis - Csuros...")
         plots.append(self.plot_csuros_error_analysis())
         
-        print("\n3. Precisão Lossy-Count...")
+        print("\n3. Lossy-Count Precision...")
         plots.append(self.plot_lossy_count_precision())
         
-        print("\n4. Memória vs Precisão...")
+        print("\n4. Memory vs Precision...")
         plots.append(self.plot_memory_vs_precision())
         
-        print("\n5. Comparação de Métodos...")
+        print("\n5. Method Comparison...")
         plots.append(self.plot_method_comparison())
         
-        print("\n6. Heatmap de Erros...")
+        print("\n6. Error Heatmap...")
         plots.append(self.plot_error_heatmap())
         
         print("\n" + "=" * 70)
-        print(f"✅ {len([p for p in plots if p])} gráficos gerados!")
-        print(f"📁 Guardados em: {self.plots_dir}")
+        print(f"✅ {len([p for p in plots if p])} plots generated!")
+        print(f"📁 Saved in: {self.plots_dir}")
         print("=" * 70)
         
         return plots
@@ -457,14 +457,14 @@ if __name__ == "__main__":
     results_dir = os.path.join(script_dir, "..", "results")
     
     print("\n" + "=" * 70)
-    print("   GERAÇÃO DE VISUALIZAÇÕES")
-    print("   Algoritmos Avançados - Trabalho 3")
+    print("   VISUALIZATION GENERATION")
+    print("   Advanced Algorithms - Project 3")
     print("=" * 70)
     
     # Verificar se existem resultados
     if not os.path.exists(results_dir):
-        print("\n❌ Diretório de resultados não encontrado!")
-        print("   Execute primeiro: python experiments.py")
+        print("\n❌ Results directory not found!")
+        print("   Run first: python experiments.py")
         sys.exit(1)
     
     # Gerar visualizações

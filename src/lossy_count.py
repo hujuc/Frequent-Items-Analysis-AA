@@ -364,22 +364,22 @@ if __name__ == "__main__":
     
     print("=" * 60)
     print("LOSSY-COUNT - Amazon Prime Dataset")
-    print("Atributo: release_year")
+    print("Attribute: release_year")
     print("=" * 60)
     
     # Primeiro, obter contagens exatas para comparação
-    print("\n📊 A obter contagens exatas para comparação...")
+    print("\n📊 Getting exact counts for comparison...")
     exact_counter = run_exact_count(data_path, 'release_year')
     exact_counts = exact_counter.get_all_counts()
     sorted_exact = sorted(exact_counts.items(), key=lambda x: x[1], reverse=True)
     
-    print(f"\n📋 TOP 10 EXATO:")
+    print(f"\n📋 EXACT TOP 10:")
     for i, (year, count) in enumerate(sorted_exact[:10], 1):
         print(f"   {i:2}. {int(year)}: {count}")
     
     # Testar Lossy-Count com diferentes epsilon
     print("\n" + "=" * 60)
-    print("🔄 EXPERIMENTOS COM LOSSY-COUNT")
+    print("🔄 LOSSY-COUNT EXPERIMENTS")
     print("=" * 60)
     
     epsilon_values = [0.1, 0.05, 0.01, 0.005]
@@ -398,13 +398,13 @@ if __name__ == "__main__":
         lc.process_stream(data)
         
         stats = lc.get_statistics()
-        print(f"📈 Estatísticas:")
-        print(f"   Total processado: {stats['total_items']}")
-        print(f"   Itens armazenados: {stats['unique_items_stored']}")
-        print(f"   Tamanho bucket: {stats['bucket_width']}")
-        print(f"   Máx. entries: {stats['max_entries']}")
-        print(f"   Podas realizadas: {stats['prune_count']}")
-        print(f"   Tempo: {stats['processing_time']*1000:.2f} ms")
+        print(f"📈 Statistics:")
+        print(f"   Total processed: {stats['total_items']}")
+        print(f"   Items stored: {stats['unique_items_stored']}")
+        print(f"   Bucket size: {stats['bucket_width']}")
+        print(f"   Max entries: {stats['max_entries']}")
+        print(f"   Prunes performed: {stats['prune_count']}")
+        print(f"   Time: {stats['processing_time']*1000:.2f} ms")
         
         # Comparar top-10
         top_10_lc = lc.get_top_n(10)
@@ -413,10 +413,10 @@ if __name__ == "__main__":
         
         hits = len(exact_top_10 & lc_top_10)
         
-        print(f"\n🎯 TOP 10 Lossy-Count (Precision: {hits}/10 = {hits*10}%):")
+        print(f"\n🎯 Lossy-Count TOP 10 (Precision: {hits}/10 = {hits*10}%):")
         for i, (year, count) in enumerate(top_10_lc, 1):
             exact = exact_counts.get(year, 0)
             marker = "✓" if year in exact_top_10 else "✗"
-            print(f"   {i:2}. {int(year)}: {count} (exato: {exact}) {marker}")
+            print(f"   {i:2}. {int(year)}: {count} (exact: {exact}) {marker}")
     
     print("\n" + "=" * 60)
