@@ -6,12 +6,42 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{booktabs}
-\usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{subcaption}
 \usepackage{float}
+\usepackage{microtype}
+
+% Center all pages (symmetric margins) with wider columns
+\usepackage{geometry}
+\geometry{
+  hmarginratio=1:1,
+  left=2cm,
+  right=2cm,
+  top=2cm,
+  bottom=2cm
+}
+
+% Reduce spacing around floats
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
+
+% Reduce spacing around algorithms
+\setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}
+\setlength{\abovedisplayshortskip}{3pt plus 2pt minus 2pt}
+\setlength{\belowdisplayshortskip}{3pt plus 2pt minus 2pt}
+
+% Prevent excessive vertical stretching
+\raggedbottom
+
+% Center all figures and tables
+\makeatletter
+\g@addto@macro\@floatboxreset\centering
+\makeatother
 
 \graphicspath{{../results/plots/}}
 
@@ -19,41 +49,35 @@
 
 \Header{1}{1}{December}{2025}{1}
 
-\title{Frequent Items Analysis:\\Comparing Exact, Approximate, and Data Stream Algorithms}
+\title{Frequent Items Analysis: Comparing Exact, Approximate, and Data Stream Algorithms}
 \author{Hugo Gonçalo Lopes Castro - 113889}
 \maketitle
 
 \begin{abstract}
-This paper presents a comprehensive study on identifying frequent items in the Amazon Prime Movies and TV Shows dataset. We analyze the \texttt{release\_year} attribute using three distinct approaches: exact counters (baseline), Csuros' probabilistic approximate counter, and the Lossy-Count data stream algorithm. Our experiments demonstrate that Lossy-Count with $\varepsilon = 0.01$ achieves 100\% precision in identifying the top-10 most frequent years, while Csuros' Counter shows higher error rates due to its probabilistic nature. We provide detailed analysis of the trade-offs between memory usage, computational efficiency, and accuracy across all methods.
+This paper presents a comprehensive study on identifying frequent items in the Amazon Prime Movies and TV Shows dataset. We analyze the \texttt{release\_year} attribute using three distinct approaches: exact counters as a baseline, Csuros' probabilistic approximate counter, and the Lossy-Count data stream algorithm. Our experiments demonstrate that Lossy-Count with $\varepsilon = 0.01$ achieves 100\% precision in identifying the top-10 most frequent years, while Csuros' Counter shows higher error rates due to its probabilistic nature. We provide detailed analysis of the trade-offs between memory usage, computational efficiency, and accuracy across all methods.
 \end{abstract}
-
-\begin{resumo}
-Este artigo apresenta um estudo sobre a identificação de itens frequentes no dataset Amazon Prime Movies and TV Shows. Analisamos o atributo \texttt{release\_year} usando três abordagens: contadores exatos (baseline), contador aproximado probabilístico de Csuros, e o algoritmo Lossy-Count para data streams. Os experimentos demonstram que Lossy-Count com $\varepsilon = 0.01$ atinge 100\% de precisão na identificação dos top-10 anos mais frequentes, enquanto o contador de Csuros apresenta taxas de erro mais elevadas devido à sua natureza probabilística.
-\end{resumo}
 
 \begin{keywords}
 Frequent Items, Data Streams, Approximate Counting, Lossy-Count, Csuros' Counter
 \end{keywords}
 
-\begin{palavraschave}
-Itens Frequentes, Data Streams, Contagem Aproximada, Lossy-Count, Contador de Csuros
-\end{palavraschave}
-
 %=============================================================================
 \section{Introduction}
 \label{sec:intro}
 
-Identifying frequent items in large datasets is a fundamental problem in data mining with applications in network traffic analysis, market basket analysis, and database query optimization~\cite{manku2002approximate}. The challenge becomes particularly interesting when dealing with data streams where memory constraints prevent storing all items.
+Identifying frequent items in large datasets is a fundamental problem in data mining with applications spanning network traffic analysis, market basket analysis, and database query optimization~\cite{manku2002approximate}. The challenge becomes particularly interesting when dealing with data streams where memory constraints prevent storing all items, necessitating the development of algorithms that can provide accurate estimates while operating within strict resource bounds.
 
-In this work, we address the problem of finding the most frequent release years in the Amazon Prime catalog. We compare three approaches:
+\subsection{Problem Definition}
+\label{subsec:problem}
 
-\begin{enumerate}
-    \item \textbf{Exact Counters}: A baseline approach using hash maps to store precise counts for all items.
-    \item \textbf{Csuros' Counter}: A probabilistic approximate counter that reduces memory at the cost of accuracy~\cite{csuros2010approximate}.
-    \item \textbf{Lossy-Count}: A deterministic data stream algorithm that identifies frequent items with bounded error~\cite{manku2002approximate}.
-\end{enumerate}
+In this work, we address the problem of finding the most frequent release years in the Amazon Prime catalog~\cite{kaggle2021prime}, a dataset containing 9,688 titles with release years spanning from 1920 to 2021. This dataset provides a realistic scenario for evaluating frequency estimation algorithms, as it exhibits the skewed distribution commonly found in real-world data where a small number of items account for a disproportionately large fraction of occurrences.
 
-The dataset contains 9,688 titles with release years spanning from 1920 to 2021, providing a realistic scenario for evaluating these algorithms.
+We compare three fundamentally different approaches to this problem. The first approach uses exact counters, which serve as a baseline by maintaining precise counts for all unique items using hash maps. The second approach employs Csuros' probabilistic approximate counter, which reduces memory requirements at the cost of introducing controlled variance in the estimates~\cite{csuros2010approximate}. The third approach utilizes the Lossy-Count algorithm, a deterministic data stream algorithm that identifies frequent items with guaranteed error bounds~\cite{manku2002approximate}.
+
+\subsection{Report Structure}
+\label{subsec:structure}
+
+The remainder of this paper is organized as follows. Section~\ref{sec:theory} presents the theoretical background for each algorithm. Section~\ref{sec:impl} describes our implementation details. Section~\ref{sec:results} presents the experimental results, while Section~\ref{sec:discussion} provides a comprehensive discussion of the findings. Finally, Section~\ref{sec:conclusion} concludes the paper with recommendations for practitioners.
 
 %=============================================================================
 \section{Theoretical Background}
@@ -61,95 +85,117 @@ The dataset contains 9,688 titles with release years spanning from 1920 to 2021,
 
 \subsection{Exact Counting}
 
-The exact counting approach maintains a counter for each unique item. Given a stream of $n$ items with $m$ unique values, this requires $O(m)$ space and $O(n)$ time. While precise, this approach becomes impractical when $m$ is very large or when processing infinite streams.
+The exact counting approach maintains a counter for each unique item observed in the data stream. Given a stream of $n$ items containing $m$ unique values, this method requires $O(m)$ space and $O(n)$ time to process all items. While this approach provides perfect accuracy, it becomes impractical when the number of unique items $m$ is very large or when processing potentially infinite streams where the set of unique items may grow unboundedly.
+
+The implementation typically uses a hash map data structure, where each unique item serves as a key and its associated count as the value. For each item encountered in the stream, the algorithm performs a lookup and increment operation, both of which execute in expected constant time given a well-designed hash function. This simplicity and exactness make it the natural choice when memory constraints are not a concern.
 
 \subsection{Csuros' Approximate Counter}
 
-Csuros' Counter~\cite{csuros2010approximate} is a probabilistic counting technique that uses a base parameter $b > 1$ to reduce memory usage. Instead of storing exact counts, it maintains an approximate counter $C$ that represents the value $b^C - 1$.
+Csuros' Counter~\cite{csuros2010approximate} is a probabilistic counting technique designed to reduce memory usage at the cost of introducing variance in the estimates. The algorithm uses a base parameter $b > 1$ and maintains an approximate counter $C$ that represents a logarithmic encoding of the true count. Rather than storing exact counts, the counter stores a value $C$ such that the estimated count is $(b^C - 1)/(b-1)$.
 
-The increment operation is probabilistic: when the true count is $n$, the counter $C$ is incremented with probability:
-\begin{equation}
-    P(\text{increment}) = \frac{1}{b^C}
-\end{equation}
+The increment operation is probabilistic in nature. When an item is observed, the counter $C$ is incremented with probability $1/b^C$. This means that as the counter grows larger, increments become increasingly rare, which is the mechanism by which the algorithm achieves its space savings. The expected value of the estimate after $n$ true increments satisfies $E[\text{estimate}] = n$, ensuring unbiasedness. However, the variance of the estimate grows with both the true count and the base parameter.
 
-The expected value of the estimate is:
-\begin{equation}
-    E[\text{estimate}] = \frac{b^C - 1}{b - 1}
-\end{equation}
-
-Smaller values of $b$ (closer to 1) provide more accurate estimates but use more memory, while larger values save memory at the cost of increased variance.
+The choice of base $b$ represents a fundamental trade-off between accuracy and memory efficiency. Smaller values of $b$ closer to 1 provide more accurate estimates with lower variance but require more bits to represent the counter value. Conversely, larger values of $b$ save memory but introduce greater variance in the estimates. This makes Csuros' Counter particularly suitable for applications requiring order-of-magnitude estimation rather than precise counts.
 
 \subsection{Lossy-Count Algorithm}
 
-The Lossy-Count algorithm~\cite{manku2002approximate} is designed for identifying frequent items in data streams with guaranteed error bounds. Given a support threshold $s$ and an error parameter $\varepsilon$, the algorithm guarantees:
+The Lossy-Count algorithm~\cite{manku2002approximate} is a deterministic data stream algorithm designed specifically for identifying frequent items with guaranteed error bounds. Given a support threshold $s$ and an error parameter $\varepsilon$, the algorithm provides three important guarantees. First, all items with true frequency at least $s \cdot n$ are guaranteed to be output. Second, no item with true frequency less than $(s - \varepsilon) \cdot n$ will be output. Third, the estimated frequencies are at most $\varepsilon \cdot n$ less than the true frequencies.
 
-\begin{enumerate}
-    \item All items with true frequency $\geq s \cdot n$ are output
-    \item No item with true frequency $< (s - \varepsilon) \cdot n$ is output
-    \item Estimated frequencies are at most $\varepsilon \cdot n$ less than true frequencies
-\end{enumerate}
+The algorithm processes the stream in conceptual buckets of size $w = \lceil 1/\varepsilon \rceil$. For each item, it maintains a tuple $(e, \Delta)$ where $e$ is the current estimated count and $\Delta$ represents the maximum possible error introduced at the time the item was first observed. When a new item is encountered, it is added to the data structure with count 1 and $\Delta$ set to the current bucket number minus one. At the boundary of each bucket, the algorithm performs a pruning operation that removes all items for which $e + \Delta$ is less than or equal to the current bucket number.
 
-The algorithm processes the stream in buckets of size $w = \lceil 1/\varepsilon \rceil$. For each item, it maintains a tuple $(e, \Delta)$ where $e$ is the estimated count and $\Delta$ is the maximum possible error. At bucket boundaries, items with $e + \Delta \leq b_{current}$ are pruned.
-
-The space complexity is $O(1/\varepsilon \cdot \log(\varepsilon \cdot n))$, making it suitable for processing large streams with bounded memory.
+The space complexity of Lossy-Count is $O(1/\varepsilon \cdot \log(\varepsilon \cdot n))$, which is significantly smaller than exact counting when $\varepsilon$ is not too small. This makes the algorithm particularly suitable for processing large data streams where memory is constrained but approximate answers with bounded error are acceptable.
 
 %=============================================================================
 \section{Implementation}
 \label{sec:impl}
 
-\subsection{System Architecture}
-
-We implemented all algorithms in Python 3.12, with modular design for extensibility. The system consists of:
-
-\begin{itemize}
-    \item \texttt{exact\_counter.py}: Baseline exact counting using Python's Counter class
-    \item \texttt{csuros\_counter.py}: Probabilistic approximate counter
-    \item \texttt{lossy\_count.py}: Data stream frequency estimation
-    \item \texttt{experiments.py}: Experiment orchestration and result collection
-    \item \texttt{visualization.py}: Publication-quality plot generation
-\end{itemize}
+We implemented all algorithms in Python 3.12, adopting a modular design that facilitates extensibility and code reuse. The system architecture consists of five main components that work together to perform the experimental analysis.
 
 \subsection{Exact Counter Implementation}
 
-The exact counter processes the stream in $O(n)$ time, maintaining a hash map of year-to-count mappings. This serves as the ground truth for evaluating approximate methods.
+The exact counter implementation uses Python's built-in Counter class from the collections module, which provides an efficient hash map implementation optimized for counting. This component processes the stream in $O(n)$ time and serves as the ground truth against which approximate methods are evaluated. Algorithm~\ref{alg:exact} presents the pseudocode for exact counting.
+
+\begin{algorithm}[H]
+\caption{Exact Counter}
+\label{alg:exact}
+\begin{algorithmic}[1]
+\State Initialize empty hash map $H$
+\For{each item $x$ in stream}
+    \If{$x \in H$}
+        \State $H[x] \gets H[x] + 1$
+    \Else
+        \State $H[x] \gets 1$
+    \EndIf
+\EndFor
+\State \Return $H$
+\end{algorithmic}
+\end{algorithm}
+
+The implementation reads the dataset, extracts the release year attribute, and maintains a complete frequency table for all unique years. This provides the baseline against which approximate methods are compared.
 
 \subsection{Csuros' Counter Implementation}
 
-For each unique year, we maintain an approximate counter. The counter uses logarithmic representation:
+The Csuros' Counter implementation maintains an approximate counter for each unique year observed. The counter uses a logarithmic representation where the increment operation is probabilistic. Algorithm~\ref{alg:csuros} shows the core operations.
 
+\begin{algorithm}[H]
+\caption{Csuros' Counter}
+\label{alg:csuros}
 \begin{algorithmic}[1]
-\Function{Increment}{counter, base}
-    \State $p \gets 1 / b^{\text{counter}}$
-    \If{random() $< p$}
-        \State counter $\gets$ counter $+ 1$
+\State Initialize counters $C[x] \gets 0$ for all items $x$
+\Function{Increment}{$x$, $b$}
+    \State $p \gets 1 / b^{C[x]}$
+    \State $r \gets$ random number in $[0,1)$
+    \If{$r < p$}
+        \State $C[x] \gets C[x] + 1$
     \EndIf
 \EndFunction
-\Function{Estimate}{counter, base}
-    \State \Return $(b^{\text{counter}} - 1) / (b - 1)$
+\Function{Estimate}{$x$, $b$}
+    \State \Return $(b^{C[x]} - 1) / (b - 1)$
 \EndFunction
 \end{algorithmic}
+\end{algorithm}
 
-We tested bases $b \in \{1.3, 1.5, 2.0, 3.0, 4.0\}$ with 10 runs each to account for probabilistic variance.
+Specifically, when incrementing a counter with current value $C$ and base $b$, the counter is incremented with probability $1/b^C$. The estimate is then computed as $(b^C - 1)/(b-1)$. We tested five different base values spanning from 1.3 to 4.0, running each configuration 10 times to account for the inherent randomness of the algorithm and obtain statistically meaningful error estimates.
 
 \subsection{Lossy-Count Implementation}
 
-Our implementation follows the original algorithm~\cite{manku2002approximate}:
+The Lossy-Count implementation follows the original algorithm specification precisely. Algorithm~\ref{alg:lossy} presents the complete procedure including the pruning mechanism.
 
+\begin{algorithm}[H]
+\caption{Lossy-Count}
+\label{alg:lossy}
 \begin{algorithmic}[1]
-\Function{ProcessItem}{item}
-    \State bucket $\gets \lfloor n / w \rfloor + 1$
-    \If{item in entries}
-        \State entries[item].count $\gets$ entries[item].count $+ 1$
+\State Initialize empty data structure $D$
+\State $w \gets \lceil 1/\varepsilon \rceil$ \Comment{Bucket width}
+\State $n \gets 0$ \Comment{Items processed}
+\For{each item $x$ in stream}
+    \State $n \gets n + 1$
+    \State $b_{current} \gets \lfloor n / w \rfloor$ \Comment{Current bucket}
+    \If{$x \in D$}
+        \State $D[x].count \gets D[x].count + 1$
     \Else
-        \State entries[item] $\gets$ (count=1, delta=bucket$-$1)
+        \State $D[x].count \gets 1$
+        \State $D[x].\Delta \gets b_{current} - 1$ \Comment{Max error}
     \EndIf
-    \If{$n \mod w = 0$}
-        \State \Call{Prune}{bucket}
+    \If{$n \bmod w = 0$}
+        \State \Call{Prune}{$D$, $b_{current}$}
     \EndIf
+\EndFor
+\Function{Prune}{$D$, $b_{current}$}
+    \For{each entry $(x, count, \Delta)$ in $D$}
+        \If{$count + \Delta \leq b_{current}$}
+            \State Remove $x$ from $D$
+        \EndIf
+    \EndFor
 \EndFunction
 \end{algorithmic}
+\end{algorithm}
 
-We tested $\varepsilon \in \{0.1, 0.05, 0.01, 0.005, 0.001\}$ with support threshold $s = \varepsilon$.
+The stream is processed in buckets of size $w = \lceil 1/\varepsilon \rceil$, and each item is stored with its count and maximum error bound. At bucket boundaries, items that cannot possibly be frequent are pruned from the data structure. We tested five different epsilon values ranging from 0.1 to 0.001, with the support threshold set equal to epsilon in all cases.
+
+\subsection{Experimental Framework}
+
+The experiment orchestration module coordinates the execution of all algorithms, collects results, and computes evaluation metrics including precision, recall, F1-score, and various error statistics. Finally, the visualization module generates publication-quality plots that illustrate the experimental findings.
 
 %=============================================================================
 \section{Experimental Results}
@@ -157,13 +203,13 @@ We tested $\varepsilon \in \{0.1, 0.05, 0.01, 0.005, 0.001\}$ with support thres
 
 \subsection{Dataset Characteristics}
 
-The Amazon Prime dataset contains 9,688 titles spanning 101 unique release years (1920--2021). Table~\ref{tab:top10} shows the exact counts for the 10 most frequent years.
+The Amazon Prime dataset contains 9,688 titles with release years spanning 101 unique values from 1920 to 2021. The distribution of release years is heavily skewed toward recent years, reflecting the natural tendency of streaming platforms to prioritize newer content. Table~\ref{tab:top10} presents the exact counts for the ten most frequent release years, showing that 2021 alone accounts for 1,442 titles, representing 14.9\% of the entire catalog.
 
 \begin{table}[H]
 \centering
 \caption{Top 10 Most Frequent Release Years (Exact Count)}
 \label{tab:top10}
-\begin{tabular}{@{}clr@{}}
+\begin{tabular}{clr}
 \toprule
 Rank & Year & Count \\
 \midrule
@@ -181,20 +227,29 @@ Rank & Year & Count \\
 \end{tabular}
 \end{table}
 
-The distribution is heavily skewed toward recent years, with 2021 alone containing 14.9\% of all titles. The least frequent years (1920s--1940s) contain only 1--5 titles each.
+The frequency distribution exhibits a clear pattern where the most recent years dominate the catalog, while older years from the 1920s through 1940s typically contain only one to five titles each. This skewed distribution is important because it affects how different algorithms perform, as highly frequent items are generally easier to identify correctly.
+
+Figure~\ref{fig:distribution} illustrates the complete frequency distribution for the top 30 most frequent years. The visualization clearly shows the dominance of recent years and the gradual decline in frequency as we move to older release years. The top 10 years are highlighted in a distinct color to facilitate comparison with approximate method outputs.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{frequency_distribution.png}
+\caption{Distribution of Amazon Prime titles by release year, showing the top 30 most frequent years with the top 10 highlighted.}
+\label{fig:distribution}
+\end{figure}
 
 \subsection{Csuros' Counter Results}
 
-Table~\ref{tab:csuros} presents the error analysis for different base values, averaged over 10 runs.
+The Csuros' Counter experiments tested five different base values, running each configuration 10 times to obtain reliable error statistics. Table~\ref{tab:csuros} presents the error analysis results, showing both absolute and relative error metrics for each base value.
 
 \begin{table}[H]
 \centering
 \caption{Csuros' Counter Error Analysis by Base}
 \label{tab:csuros}
-\begin{tabular}{@{}crrrr@{}}
+\begin{tabular}{crrrr}
 \toprule
 Base & Mean Abs. & Max Abs. & Mean Rel. & Max Rel. \\
-& Error & Error & Error (\%) & Error (\%) \\
+ & Error & Error & Error (\%) & Error (\%) \\
 \midrule
 1.3 & 313.4 & 14,478.4 & 296.3 & 2,089.2 \\
 1.5 & 208.9 & 8,136.5 & 191.5 & 1,751.1 \\
@@ -205,17 +260,28 @@ Base & Mean Abs. & Max Abs. & Mean Rel. & Max Rel. \\
 \end{tabular}
 \end{table}
 
-As expected, larger bases produce lower variance but lose precision. Even with $b=4.0$, the mean relative error of 47.2\% makes accurate top-$k$ identification unreliable. This is inherent to Csuros' Counter design—it excels at order-of-magnitude estimation rather than precise ranking.
+The results reveal an interesting pattern where the relationship between base value and error is not monotonic as might be expected from theory. While larger bases generally produce lower mean absolute errors, the improvement diminishes for bases above 3.0. The mean relative error decreases from 296.3\% with base 1.3 to 47.2\% with base 4.0, but even this best-case scenario represents substantial uncertainty that makes precise ranking of items unreliable.
+
+Figure~\ref{fig:csuros} provides a visual comparison of absolute and relative errors across different base values. The bar charts clearly illustrate how error metrics vary with the choice of base parameter, helping practitioners understand the trade-offs involved in parameter selection.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{csuros_error_analysis.png}
+\caption{Error analysis for Csuros' Counter showing mean and maximum errors for both absolute (left) and relative (right) metrics across different base values.}
+\label{fig:csuros}
+\end{figure}
+
+The high variance inherent in Csuros' Counter makes it unsuitable for precise top-$k$ identification tasks. However, the algorithm excels at providing order-of-magnitude estimates with minimal memory overhead, which can be valuable in applications where approximate knowledge of item frequency is sufficient.
 
 \subsection{Lossy-Count Results}
 
-Table~\ref{tab:lossy} shows precision, recall, and F1-score for identifying top-10 items across different $\varepsilon$ values.
+The Lossy-Count experiments evaluated five different epsilon values across six different top-$n$ settings. Table~\ref{tab:lossy} summarizes the performance metrics for top-10 identification, which is the primary use case of interest.
 
 \begin{table}[H]
 \centering
 \caption{Lossy-Count Performance for Top-10 Identification}
 \label{tab:lossy}
-\begin{tabular}{@{}crrrc@{}}
+\begin{tabular}{crrrr}
 \toprule
 $\varepsilon$ & Memory & Precision & Recall & F1-Score \\
 \midrule
@@ -228,82 +294,130 @@ $\varepsilon$ & Memory & Precision & Recall & F1-Score \\
 \end{tabular}
 \end{table}
 
-Lossy-Count achieves perfect top-10 identification with $\varepsilon \leq 0.01$, requiring only 52 entries (51\% of the 101 unique years). This demonstrates the algorithm's efficiency for frequency-heavy distributions.
+The results demonstrate the effectiveness of Lossy-Count for frequent item identification. With $\varepsilon = 0.01$, the algorithm achieves perfect precision and recall for top-10 identification while storing only 52 entries, which represents approximately 51\% of the 101 unique years in the dataset. This represents a significant memory savings compared to exact counting while maintaining perfect accuracy for the frequent items of interest.
 
-\subsection{Memory vs. Precision Trade-off}
-
-Figure~\ref{fig:comparison} illustrates the fundamental trade-off between memory usage and precision. Lossy-Count with $\varepsilon = 0.01$ provides the optimal balance, achieving 100\% precision while storing only half the unique items.
+Figure~\ref{fig:precision} shows how precision and F1-score vary with epsilon for different values of $n$. The logarithmic scale on the x-axis highlights the relationship between epsilon and performance, showing that smaller epsilon values consistently yield better results across all top-$n$ settings.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\columnwidth]{method_comparison.png}
-\caption{Method comparison: Precision in top-10 identification}
+\includegraphics[width=0.9\columnwidth]{lossy_count_precision.png}
+\caption{Lossy-Count precision (left) and F1-score (right) as a function of epsilon for different top-$n$ values.}
+\label{fig:precision}
+\end{figure}
+
+\subsection{Memory-Precision Trade-off}
+
+One of the most important practical considerations when selecting an algorithm is the trade-off between memory usage and precision. Figure~\ref{fig:memory} illustrates this relationship for the Lossy-Count algorithm, plotting precision against memory usage for different epsilon values.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{memory_vs_precision.png}
+\caption{Trade-off between memory usage and precision for Lossy-Count, showing how smaller epsilon values increase both memory requirements and precision.}
+\label{fig:memory}
+\end{figure}
+
+The figure reveals that there is a clear knee in the curve around $\varepsilon = 0.01$, where perfect precision is achieved with moderate memory usage. For epsilon values smaller than 0.01, additional memory provides no improvement in precision since the algorithm is already perfect. For larger epsilon values, memory savings come at a significant cost to precision.
+
+\subsection{Method Comparison}
+
+Figure~\ref{fig:comparison} provides a direct comparison of precision across all three methods. The exact counter naturally achieves 100\% precision by definition. Lossy-Count with $\varepsilon = 0.01$ matches this performance while using less memory. Csuros' Counter with base 2.0 achieves only 70\% precision, highlighting its unsuitability for precise ranking tasks.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{method_comparison.png}
+\caption{Method comparison showing precision in top-10 identification (left) and the actual top-10 years by exact count (right).}
 \label{fig:comparison}
 \end{figure}
 
-\subsection{F1-Score Heatmap}
+\subsection{Comprehensive Performance Heatmap}
 
-Figure~\ref{fig:heatmap} shows how performance varies across different combinations of $\varepsilon$ and top-$n$ values.
+To provide a complete picture of Lossy-Count performance across all parameter combinations, Figure~\ref{fig:heatmap} presents a heatmap of F1-scores for different combinations of epsilon and top-$n$ values.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\columnwidth]{error_heatmap.png}
-\caption{F1-Score heatmap for Lossy-Count across $\varepsilon$ and $n$ values}
+\includegraphics[width=0.9\columnwidth]{error_heatmap.png}
+\caption{F1-Score heatmap for Lossy-Count showing performance across different combinations of epsilon (rows) and top-$n$ values (columns). Green indicates better performance while red indicates worse performance.}
 \label{fig:heatmap}
 \end{figure}
 
-The heatmap reveals that smaller $\varepsilon$ values consistently achieve higher F1-scores, with $\varepsilon = 0.001$ achieving 100\% across all tested $n$ values.
+The heatmap clearly shows that smaller epsilon values consistently achieve higher F1-scores across all top-$n$ settings. With $\varepsilon = 0.001$, the algorithm achieves perfect F1-scores across all tested values of $n$, demonstrating the robustness of the approach when sufficient memory is available.
 
 %=============================================================================
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{Algorithm Comparison}
+\subsection{Comparative Algorithm Analysis}
+\label{subsec:comparison}
 
-Our experiments reveal distinct use cases for each algorithm:
+The experimental results reveal distinct characteristics and use cases for each of the three algorithms evaluated. Exact counters provide the ground truth and are the natural choice when memory constraints are not a concern. For the dataset analyzed, which contains only 101 unique years, exact counting is entirely feasible and provides perfect accuracy. However, in scenarios with high-cardinality attributes containing millions of unique values, exact counting becomes impractical due to the linear space complexity in the number of unique items.
 
-\textbf{Exact Counters} provide ground truth but require $O(m)$ space. For our dataset with $m=101$ years, this is acceptable, but would be problematic for high-cardinality attributes.
+The deterministic nature of exact counting makes it the gold standard for validation and benchmarking. In our experiments, the exact counter processed all 9,688 titles efficiently, maintaining 101 unique counters with negligible computational overhead. This performance is characteristic of modern hash map implementations that provide expected constant-time operations for insertion and lookup. However, the fundamental limitation emerges when scaling to domains with billions of unique items, where maintaining individual counters becomes prohibitively expensive in terms of memory consumption.
 
-\textbf{Csuros' Counter} reduces memory per counter to $O(\log \log n)$ bits but introduces significant variance. With mean relative errors exceeding 47\% even at $b=4.0$, it is unsuitable for precise ranking tasks. However, it excels at order-of-magnitude estimation (e.g., determining if a year has ``hundreds'' vs. ``thousands'' of titles).
+\subsection{Probabilistic Counting Limitations}
+\label{subsec:probabilistic}
 
-\textbf{Lossy-Count} emerges as the clear winner for top-$k$ identification. With $\varepsilon = 0.01$, it achieves perfect precision using only 52 entries. The deterministic error bounds make it reliable for production systems.
+Csuros' Counter demonstrates the fundamental limitations of probabilistic counting for ranking tasks. Even with the best-performing base value of 4.0, the mean relative error of 47.2\% makes it unreliable for identifying the exact top-$k$ items. The algorithm produces unbiased estimates, meaning the expected value equals the true count, but the variance is too high for precise ranking. This finding is consistent with the theoretical analysis of the algorithm, which shows that variance grows with both the true count and the base parameter.
 
-\subsection{Practical Recommendations}
+The probabilistic nature of Csuros' Counter introduces an inherent trade-off between memory efficiency and estimation accuracy. Our experiments reveal that this trade-off is particularly unfavorable for ranking applications. Consider the case of distinguishing between the 10th and 11th most frequent years, which have exact counts of 252 and 249 respectively. With a mean relative error exceeding 47\%, these two items become statistically indistinguishable, leading to incorrect rankings in approximately half of all trials.
 
-Based on our findings:
+Despite its limitations for ranking, Csuros' Counter excels at order-of-magnitude estimation with minimal memory overhead. In applications where it is sufficient to know whether an item appears hundreds versus thousands of times, the algorithm provides a practical solution with very low memory requirements. The logarithmic representation of counts means that each counter requires only a few bits regardless of the true count. This makes it particularly suitable for monitoring applications where approximate counts suffice for anomaly detection or trend analysis.
 
-\begin{enumerate}
-    \item For top-10 identification in similar distributions, use Lossy-Count with $\varepsilon = 0.01$
-    \item For order-of-magnitude estimation, Csuros' Counter with $b \geq 3.0$ provides reasonable approximations with minimal memory
-    \item When exact counts are required and memory permits, exact counters remain optimal
-\end{enumerate}
+\subsection{Deterministic Stream Algorithm Performance}
+\label{subsec:deterministic}
 
-\subsection{Limitations}
+Lossy-Count emerges as the clear winner for top-$k$ identification tasks. The algorithm achieves perfect precision with $\varepsilon = 0.01$, correctly identifying all top-10 items while storing only 52 entries. This represents a 49\% reduction in memory compared to exact counting, with no loss in accuracy for the frequent items of interest. The deterministic error bounds of Lossy-Count provide guarantees that probabilistic methods cannot match, making it suitable for production systems where reliability is paramount.
 
-Our analysis has several limitations:
-\begin{itemize}
-    \item The dataset's skewed distribution (recent years dominate) may favor Lossy-Count
-    \item We did not test streaming scenarios with concept drift
-    \item Memory measurements are approximated by entry counts, not actual bytes
-\end{itemize}
+The success of Lossy-Count can be attributed to its sophisticated pruning mechanism that leverages the frequency distribution characteristics. In our skewed dataset, where the top 10 years account for a substantial fraction of all titles, the algorithm quickly identifies these highly frequent items and retains them throughout the stream processing. Less frequent items are systematically pruned as their count plus error bound falls below the threshold, ensuring that memory usage remains bounded while preserving all genuinely frequent items.
+
+The choice of epsilon in Lossy-Count represents a fundamental trade-off between memory and accuracy. Our experiments show that $\varepsilon = 0.01$ provides an optimal balance for this dataset, achieving perfect accuracy with moderate memory usage. For other datasets with different frequency distributions, the optimal epsilon may differ, but the methodology for determining it remains the same. The theoretical guarantee that all items with frequency at least $s$ are retained provides practitioners with a principled approach to parameter selection based on application requirements.
+
+\subsection{Memory-Accuracy Trade-offs}
+\label{subsec:tradeoffs}
+
+The experimental evaluation reveals three distinct regimes in the memory-accuracy trade-off space. The first regime, represented by exact counting, offers perfect accuracy at the cost of linear space complexity in the number of unique items. This approach is optimal when memory is abundant or when the number of unique items is small, as demonstrated by our experiments on the Amazon Prime dataset with only 101 unique years.
+
+The second regime, occupied by Lossy-Count with carefully chosen epsilon, provides a middle ground where near-perfect or perfect accuracy for frequent items is achieved with substantial memory savings. Our results show that with $\varepsilon = 0.01$, Lossy-Count achieves 100\% precision while using approximately half the memory of exact counting. This regime is particularly attractive for practical applications where identifying the top-$k$ items is the primary objective.
+
+The third regime, exemplified by Csuros' Counter with large base values, minimizes memory consumption at the expense of significant accuracy degradation. This regime is suitable only for applications requiring rough order-of-magnitude estimates rather than precise counts. The high variance in estimates makes this approach unsuitable for ranking tasks but potentially valuable for coarse-grained monitoring where distinguishing between items with hundreds versus thousands of occurrences suffices.
+
+\subsection{Practical Implications for System Design}
+\label{subsec:practical}
+
+The findings of this study have important implications for practitioners designing systems to identify frequent items in large-scale data streams. For applications requiring guaranteed identification of all items exceeding a specified frequency threshold, Lossy-Count with appropriately chosen epsilon provides an excellent balance of accuracy, memory efficiency, and deterministic guarantees. The ability to tune epsilon based on application requirements makes this algorithm adaptable to various scenarios with different memory constraints and accuracy requirements.
+
+For real-time monitoring systems where approximate counts suffice for detecting trends or anomalies, Csuros' Counter offers a memory-efficient solution that can scale to extremely high-cardinality domains. However, system designers must carefully evaluate whether the inherent variance in estimates is acceptable for their specific use case. Applications requiring precise ranking or threshold-based decisions should avoid probabilistic counting methods due to their unreliability in distinguishing between items with similar frequencies.
+
+The choice between exact and approximate counting should be driven by three primary factors: the cardinality of the domain, available memory resources, and application requirements for accuracy. For domains with millions or billions of unique items, approximate methods become necessary. However, for domains with moderate cardinality, the simplicity and perfect accuracy of exact counting may outweigh the benefits of approximate algorithms.
+
+\subsection{Experimental Limitations and Validity}
+\label{subsec:limitations}
+
+Several limitations of our analysis should be acknowledged to properly contextualize the findings. The heavily skewed distribution of the Amazon Prime dataset, where recent years dominate the frequency distribution, may favor Lossy-Count since highly frequent items are easier to identify correctly. Datasets with more uniform distributions or multiple frequency tiers may exhibit different performance characteristics, potentially requiring different epsilon values or alternative algorithms altogether.
+
+Additionally, our experiments process the entire dataset as a batch rather than as a true stream, which does not capture the challenges of concept drift where the frequency distribution changes over time. In streaming scenarios where item frequencies evolve dynamically, algorithms must adapt to changing distributions while maintaining accuracy guarantees. Future work should evaluate these algorithms under non-stationary distributions to assess their robustness to temporal variations.
+
+Finally, our memory measurements are based on the number of entries stored rather than actual bytes consumed, which may underestimate the overhead of hash table implementations. Real-world implementations incur additional memory costs for hash table load factors, pointer structures, and metadata. A more comprehensive memory analysis would include these implementation-specific overheads to provide more realistic estimates of memory consumption in production systems.
+
+\subsection{Future Research Directions}
+\label{subsec:future}
+
+Several promising directions for future research emerge from this work. Hybrid approaches that combine the memory efficiency of approximate counters with the precision of deterministic algorithms represent an intriguing avenue for exploration. For example, a two-tier system could use probabilistic counters for initial filtering followed by exact counting for items that exceed a preliminary threshold. Such hybrid architectures may provide superior trade-offs for certain workload characteristics.
+
+Extensions to multi-dimensional frequent item mining, where the goal is to identify frequently co-occurring combinations of attributes, present additional algorithmic challenges. The space of possible combinations grows exponentially with dimensionality, making naive approaches infeasible. Developing efficient algorithms that can identify frequent itemsets in high-dimensional streams while maintaining bounded memory usage remains an important open problem with applications in market basket analysis and network traffic monitoring.
+
+Finally, evaluation on streaming scenarios with concept drift would provide valuable insights into algorithm behavior under more realistic conditions. Real-world data streams often exhibit temporal variations in frequency distributions due to seasonality, trends, or external events. Understanding how different algorithms adapt to these changes and developing techniques to detect and respond to concept drift would enhance the practical applicability of frequent item identification methods.
 
 %=============================================================================
 \section{Conclusion}
 \label{sec:conclusion}
 
-This work compared three approaches for identifying frequent items in the Amazon Prime dataset. Our experiments demonstrate that:
+This work presented a comprehensive comparison of three approaches for identifying frequent items in the Amazon Prime Movies and TV Shows dataset. The experimental evaluation demonstrates that Lossy-Count is highly effective for top-$k$ identification, achieving 100\% precision with $\varepsilon = 0.01$ while using only 52 entries to store the necessary information. In contrast, Csuros' Counter proves unsuitable for precise ranking due to its inherent high variance, with mean relative errors ranging from 47\% to 296\% depending on the base parameter. However, Csuros' Counter remains valuable for order-of-magnitude estimation applications where approximate knowledge is sufficient.
 
-\begin{enumerate}
-    \item \textbf{Lossy-Count} is highly effective for top-$k$ identification, achieving 100\% precision with $\varepsilon = 0.01$ while using only 52 entries
-    \item \textbf{Csuros' Counter} is unsuitable for precise ranking due to high variance, with mean relative errors of 47--296\% depending on the base
-    \item The choice of algorithm depends heavily on the use case: Lossy-Count for top-$k$ queries, Csuros' for rough magnitude estimation
-\end{enumerate}
+The practical implications of these findings are significant for system designers. When implementing frequent item detection in production systems, Lossy-Count with appropriately chosen epsilon provides a reliable solution with bounded memory requirements and guaranteed error bounds. Exact counting remains the best choice when memory is not constrained and perfect accuracy is required. Csuros' Counter should be reserved for specialized applications where rough magnitude estimates are acceptable and memory is severely limited.
 
-Future work could explore hybrid approaches combining the memory efficiency of approximate counters with the precision of deterministic algorithms, particularly for multi-dimensional frequent item mining.
+Future work could explore several interesting directions. Hybrid approaches that combine the memory efficiency of approximate counters with the precision of deterministic algorithms may provide better trade-offs for certain workloads. Extensions to multi-dimensional frequent item mining, where the goal is to identify frequently co-occurring combinations of attributes, present additional challenges that merit investigation. Finally, evaluation on streaming scenarios with concept drift would provide insights into algorithm behavior under more realistic conditions.
 
 %=============================================================================
-\bibliography{references}
-
 \begin{thebibliography}{9}
 
 \bibitem{manku2002approximate}
@@ -312,11 +426,8 @@ G.~S. Manku and R.~Motwani, ``Approximate frequency counts over data streams,'' 
 \bibitem{csuros2010approximate}
 M.~Csűrös, ``Approximate counting with a floating-point counter,'' in \emph{Computing and Combinatorics}, 2010, pp. 358--367.
 
-\bibitem{cormode2005improved}
-G.~Cormode and S.~Muthukrishnan, ``An improved data stream summary: the count-min sketch and its applications,'' \emph{Journal of Algorithms}, vol. 55, no. 1, pp. 58--75, 2005.
-
-\bibitem{metwally2005efficient}
-A.~Metwally, D.~Agrawal, and A.~El~Abbadi, ``Efficient computation of frequent and top-$k$ elements in data streams,'' in \emph{International Conference on Database Theory}, 2005, pp. 398--412.
+\bibitem{kaggle2021prime}
+S.~Bansal, ``Amazon Prime Movies and TV Shows,'' Kaggle, 2021. [Online]. Available: https://www.kaggle.com/datasets/shivamb/amazon-prime-movies-and-tv-shows
 
 \end{thebibliography}
 
